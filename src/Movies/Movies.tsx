@@ -24,8 +24,6 @@ function MovieComponent(
     movieInFavorites(movie);
   }
 
-  console.log("here")
-
   return (
     <div>
       <h4 style={{ textAlign: "center", maxWidth: "300px", maxHeight: "15px" }}>{name}</h4>

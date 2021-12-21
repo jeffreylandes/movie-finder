@@ -40,7 +40,10 @@ async function fetchPopularMovies(): Promise<Movie[]> {
   const responseMoviesFlattened = responseMovies.reduce(
       (accumulator, value) => accumulator.concat(value, [])
   )
-  const popularMovies = responseMoviesFlattened.map((movie: any) => ({
+  const englishLanguageMovies = responseMoviesFlattened.filter(
+    (movie: any) => movie.original_language === "en"
+  )
+  const popularMovies = englishLanguageMovies.map((movie: any) => ({
     id: movie.id,
     name: movie.original_title,
     poster: movie.poster_path,
