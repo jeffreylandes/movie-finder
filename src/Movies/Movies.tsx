@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import {
   useRecoilValue,
   useRecoilValueLoadable,
@@ -14,7 +14,6 @@ const getAltTextFromMovieName = (name: string) =>
 
 function MovieComponent(
   movie: Movie,
-  currentFavoriteMovies: Set<Movie>,
   movieInFavorites: any,
 ) {
   const { name, poster, } = movie;
@@ -61,7 +60,7 @@ function Movies() {
   }
 
   const movieComponents = popularMovies.contents.map((movie: Movie) =>
-    MovieComponent(movie, currentFavoriteMovies, movieInFavorites)
+    MovieComponent(movie, movieInFavorites)
   );
 
   return (
