@@ -1,24 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Movies from "./Movies/Movies";
+import { Navbar } from "./Navbar/Navbar";
+import { OrderButton } from "./Order/OrderButton";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
+      <Navbar />
+      <Movies />
+    </div>
+    <OrderButton />
     </div>
   );
 }
