@@ -1,9 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
+  useRecoilState,
   useRecoilValue,
   useRecoilValueLoadable,
 } from "recoil";
-import { Movie, PopularMovies } from "./fetchPopularMovies";
+import { Movie, popularMovies, popularMoviesSelector } from "./fetchPopularMovies";
 import { favoriteMovies } from "./state";
 
 const getFullUrlFromPoster = (poster: string) =>
@@ -39,8 +40,19 @@ function MovieComponent(
 }
 
 function Movies() {
-  const popularMovies = useRecoilValueLoadable(PopularMovies);
+  const moviesSelector = useRecoilValueLoadable(popularMoviesSelector);
+  const [movies, setPopularMovies] = useRecoilState(popularMovies);
   const currentFavoriteMovies = useRecoilValue(favoriteMovies);
+  const isLoading = moviesSelector.state === "loading";
+
+  useEffect(
+    () => {
+      if (!isLoading) {
+        setPopularMovies(moviesSelector.contents);
+      }
+    },
+    [moviesSelector]
+  )
 
   const movieInFavorites = useCallback(
     (movie: Movie) => {
@@ -53,11 +65,7 @@ function Movies() {
     [currentFavoriteMovies]
   )
 
-  if (popularMovies.state === "loading") {
-    return <></>;
-  }
-
-  const movieComponents = popularMovies.contents.map((movie: Movie) =>
+  const movieComponents = movies.map((movie: Movie) =>
     MovieComponent(movie, movieInFavorites)
   );
 
