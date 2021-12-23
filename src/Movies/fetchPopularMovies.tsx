@@ -1,5 +1,6 @@
 import { atom, selector } from "recoil";
-import { movieFilters } from "../Navbar/state";
+import { movieFilter, movieFilters } from "../Navbar/state";
+import { genresMap } from "./genres";
 
 const readAccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZTMyMjc1M2MxOTgzOWRlZTUxOGJhNjkyN2Q4Zjk2YSIsInN1YiI6IjYxYjE1ZmIxNTgwMGM0MDAxOTlhMGQxMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VZC3BOQSiAR4sQY0axoNID0byNXGlrouNz6AuP4z5Zk";
 export const headers = {
@@ -13,6 +14,7 @@ export type Movie = {
   name: string;
   poster: string;
   releaseDate: string;
+  genres: Array<string>;
 };
 
 export const popularMovies = atom<Movie[]>({
@@ -31,22 +33,39 @@ function movieWithinTimeframe(movie: Movie, time: string): boolean {
   return releaseDate < yearHigh && releaseDate >= yearLow;
 }
 
+function movieHasGenre(movie: Movie, genre: string): boolean {
+  for (const movieGenre of movie.genres) {
+    if (movieGenre === genre) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isMovieFiltered(movie: Movie, filter: movieFilter): boolean {
+  switch (filter.key) {
+    case "time": {
+      return movieWithinTimeframe(movie, filter.value);
+    }
+    case "genre":
+      return movieHasGenre(movie, filter.value);
+    default:
+      return false;
+  }
+}
+
 export const popularMoviesSelector = selector<Movie[]>({
   key: "PopularMoviesSelector",
   get: async ( {get} ) => {
     const filters = Array.from(get(movieFilters));
-    let popularMovies = await fetchPopularMovies();
+    const allPopularMovies = await fetchPopularMovies();
     if (filters.length === 0) {
-      return popularMovies;
+      return allPopularMovies;
     }
-    for (let filter of filters) {
-      switch (filter.key) {
-        case "time": {
-          popularMovies = popularMovies.filter((movie) => movieWithinTimeframe(movie, filter.value) )
-        }
-      }
-    }
-    return popularMovies;
+    const filteredPopularMovies = allPopularMovies.filter(
+      (movie) => filters.map((filter) => isMovieFiltered(movie, filter)).some(bool => bool)
+    )
+    return filteredPopularMovies;
   }
 });
 
@@ -56,6 +75,11 @@ async function requestPage(page: number) {
     .then((response) => response.json())
     .then((data) => data.results);
   return responseData;
+}
+
+function getMovieGenres(movie: any) {
+  const genres = movie.genre_ids;
+  return genres.map((genreId: number) => genresMap.get(genreId))
 }
 
 async function fetchPopularMovies(): Promise<Movie[]> {
@@ -77,6 +101,7 @@ async function fetchPopularMovies(): Promise<Movie[]> {
     name: movie.original_title,
     poster: movie.poster_path,
     releaseDate: movie.release_date,
+    genres: getMovieGenres(movie),
   }));
   return popularMovies;
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import {
   useRecoilState,
   useRecoilValue,
@@ -15,19 +15,23 @@ const getAltTextFromMovieName = (name: string) =>
 
 function MovieComponent(
   movie: Movie,
-  movieInFavorites: any,
+  currentFavoriteMovies: Set<Movie>,
 ) {
   const { name, poster, } = movie;
   const fullPosterUrl = getFullUrlFromPoster(poster);
   const altText = getAltTextFromMovieName(name);
 
   const onClick = () => {
-    movieInFavorites(movie);
+    if (!currentFavoriteMovies.has(movie)) {
+      currentFavoriteMovies.add(movie);
+    } else {
+      currentFavoriteMovies.delete(movie);
+    }
   }
 
   return (
     <div>
-      <h4 style={{ textAlign: "center", maxWidth: "300px", maxHeight: "15px" }}>{name}</h4>
+      <h4 style={{ textAlign: "center", maxWidth: "300px", maxHeight: "15px", fontFamily: "Trebuchet MS" }}>{name}</h4>
       <img
         src={fullPosterUrl}
         height={300}
@@ -51,22 +55,11 @@ function Movies() {
         setPopularMovies(moviesSelector.contents);
       }
     },
-    [moviesSelector]
-  )
-
-  const movieInFavorites = useCallback(
-    (movie: Movie) => {
-      if (!currentFavoriteMovies.has(movie)) {
-        currentFavoriteMovies.add(movie);
-      } else {
-        currentFavoriteMovies.delete(movie);
-      }
-    },
-    [currentFavoriteMovies]
+    [moviesSelector, isLoading, setPopularMovies]
   )
 
   const movieComponents = movies.map((movie: Movie) =>
-    MovieComponent(movie, movieInFavorites)
+    MovieComponent(movie, currentFavoriteMovies)
   );
 
   return (
@@ -77,7 +70,7 @@ function Movies() {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "space-around",
-        gap: "10px"
+        gap: "20px"
       }}
     >
       {movieComponents}

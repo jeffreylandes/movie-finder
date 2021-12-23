@@ -1,3 +1,6 @@
+import { useSetRecoilState } from "recoil"
+import { newMoviesSelected } from "./state"
+
 const buttonStyle = {
     "backgroundColor": "green",
     "fontSize": "16px",
@@ -9,13 +12,17 @@ const buttonStyle = {
 
 
 export function OrderButton() {
+    const setNewMoviesPage = useSetRecoilState(newMoviesSelected);
+    const onClick = () => {
+        setNewMoviesPage(true);
+    }
     return (
         <div style={{
             "position": "fixed",
             "bottom": 20,
             "right": 40,
         }}>
-            <button style={buttonStyle}>Find New Movies!</button>
+            <button style={buttonStyle} onClick={onClick}>Find New Movies!</button>
         </div>
     )
 }

@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { useRecoilState } from "recoil";
+import { genresMap } from "../Movies/genres";
 import { movieFilter, movieFilters } from "./state"
 
 const buttonStyle = {
   backgroundColor: "gray",
-  fontSize: "100%",
   borderColor: "gray",
   borderStyle: "none",
+  fontFamily: "Trebuchet MS",
+  fontSize: "20px",
 };
 
 const outerListStyle = {
   listStyleType: "none",
   paddingLeft: "10px",
+  paddingTop: "5px",
 };
 const innerListStyle = {
   listStyleType: "none",
@@ -60,7 +63,7 @@ function LeafButton(filter: movieFilter) {
 
 function GenreList() {
   const [clicked, setClicked] = useState(false);
-  const genres = ["Comedy", "Drama", "Romance", "Western"];
+  const genres = Array.from(genresMap.values());
   const genreComponents = genres.map((genre) => LeafButton({key: "genre", value: genre}));
   const onClick = () => {
     setClicked(!clicked);
