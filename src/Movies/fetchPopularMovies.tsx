@@ -7,7 +7,7 @@ export const headers = {
     "Authorization": `Bearer ${readAccessToken}`
 };
 
-const NUM_PAGES = 100;
+const NUM_PAGES = 10;
 
 export type Movie = {
   id: string;
@@ -15,6 +15,7 @@ export type Movie = {
   poster: string;
   releaseDate: string;
   genres: Array<string>;
+  overview: string;
 };
 
 export const popularMovies = atom<Movie[]>({
@@ -24,7 +25,6 @@ export const popularMovies = atom<Movie[]>({
 
 function movieWithinTimeframe(movie: Movie, time: string): boolean {
   if (movie.releaseDate === undefined) {
-    console.log(movie);
     return false;
   }
   const releaseDate = parseInt(movie.releaseDate.substring(0, 4));
@@ -102,6 +102,7 @@ async function fetchPopularMovies(): Promise<Movie[]> {
     poster: movie.poster_path,
     releaseDate: movie.release_date,
     genres: getMovieGenres(movie),
+    overview: movie.overview,
   }));
   return popularMovies;
 }

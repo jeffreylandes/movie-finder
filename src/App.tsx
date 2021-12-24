@@ -4,6 +4,7 @@ import Movies from "./Movies/Movies";
 import { Navbar } from "./Navbar/Navbar";
 import { OrderButton } from "./Order/OrderButton";
 import { newMoviesSelected } from "./Order/state";
+import { NewMoviePage } from "./pages/newMovies/NewMoviePage";
 
 function App() {
   const isNewMoviesSelected = useRecoilValue(newMoviesSelected);
@@ -25,9 +26,7 @@ function App() {
         </div>
       )}
       {isNewMoviesSelected && (
-        <div>
-          <h1>Here are your new movies.</h1>
-        </div>
+        <NewMoviePage />
       )}
     </div>
   );

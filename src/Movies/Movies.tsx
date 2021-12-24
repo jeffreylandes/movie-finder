@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { MutableRefObject, RefObject, useEffect, useRef } from "react";
 import {
   useRecoilState,
   useRecoilValue,
@@ -7,7 +7,7 @@ import {
 import { Movie, popularMovies, popularMoviesSelector } from "./fetchPopularMovies";
 import { favoriteMovies } from "./state";
 
-const getFullUrlFromPoster = (poster: string) =>
+export const getFullUrlFromPoster = (poster: string) =>
   `https://image.tmdb.org/t/p/w500/${poster}`;
 
 const getAltTextFromMovieName = (name: string) =>
@@ -29,6 +29,10 @@ function MovieComponent(
     }
   }
 
+  const onMouseOver = () => {
+    return <div></div>
+  }
+
   return (
     <div>
       <h4 style={{ textAlign: "center", maxWidth: "300px", maxHeight: "15px", fontFamily: "Trebuchet MS" }}>{name}</h4>
@@ -38,6 +42,7 @@ function MovieComponent(
         width={300}
         alt={altText}
         onClick={onClick}
+        onMouseOver={onMouseOver}
       />
     </div>
   );
