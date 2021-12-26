@@ -10,3 +10,5 @@ export const genresMap: Map<number, string> = new Map<number, string>([
   [10749, "Romance"],
   [37, "Western"],
 ]);
+
+export const animationGenre = 16;

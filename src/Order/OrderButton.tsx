@@ -1,4 +1,5 @@
-import { useSetRecoilState } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
+import { favoriteMovies } from "../Movies/state";
 import { newMoviesSelected } from "./state"
 
 const buttonStyle = {
@@ -13,8 +14,14 @@ const buttonStyle = {
 
 export function OrderButton() {
     const setNewMoviesPage = useSetRecoilState(newMoviesSelected);
+    const userFavoriteMovies = useRecoilValue(favoriteMovies);
+
     const onClick = () => {
-        setNewMoviesPage(true);
+        if (userFavoriteMovies.size !== 0) {
+            setNewMoviesPage(true);
+        } else {
+            alert("No movies have been selected!")
+        }
     }
     return (
         <div style={{

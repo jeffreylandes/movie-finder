@@ -1,5 +1,6 @@
 import { Actor } from "./fetchActors";
 import { headers } from "./fetchPopularMovies";
+import { animationGenre } from "./genres";
 
 export type SlimMovie = {
   movieId: string;
@@ -19,7 +20,7 @@ function compareTwoMoviesPopularity(movieOne: any, movieTwo: any): number {
 
 function characterIsCredited(characterName: string | undefined) {
   if (characterName) {
-    return !characterName.includes("uncredited")
+    return !characterName.includes("uncredited");
   }
   return false;
 }
@@ -33,7 +34,10 @@ export async function fetchPersonsMovies(
     .then((allMovies) => allMovies.cast);
   const moviesSortedByPopularity = movies.sort(compareTwoMoviesPopularity);
   const creditedMovies = moviesSortedByPopularity.filter(
-    (movie) => characterIsCredited(movie.character)
+    (movie) =>
+      characterIsCredited(movie.character) &&
+      movie.id !== actor.originalMovie.id &&
+      !(movie.genre_ids.includes(animationGenre))
   );
   const finalTenMovies = creditedMovies.slice(0, 10);
   const finalSlimMovies = finalTenMovies.map((movie: any) => ({
@@ -41,9 +45,10 @@ export async function fetchPersonsMovies(
     title: movie.title,
     posterPath: movie.poster_path,
   }));
+
   const actorAndMovies = {
-      actor: actor,
-      movies: finalSlimMovies,
-  }
+    actor: actor,
+    movies: finalSlimMovies,
+  };
   return actorAndMovies;
 }

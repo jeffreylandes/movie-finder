@@ -13,7 +13,7 @@ export const actorSelector = selector<Set<Actor>>({
   get: async ({ get }) => {
     const currentFavoriteMovies = get(favoriteMovies);
     const fetchActorRequests = Array.from(currentFavoriteMovies).map(
-      (movie: Movie) => fetchActorsFromMovie(movie.id)
+      (movie: Movie) => fetchActorsFromMovie(movie)
     );
     const allPopularActors = await Promise.all(fetchActorRequests).then(
       (response) => response

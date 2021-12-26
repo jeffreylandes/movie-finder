@@ -10,10 +10,12 @@ function MovieImg(posterPath: string) {
 
 function ActorAndMoviesComponent(actorAndMovies: ActorAndMovies) {
     const actorProfilePath = getFullUrlFromPoster(actorAndMovies.actor.profilePath);
+    const originalMoviePosterPath = getFullUrlFromPoster(actorAndMovies.actor.originalMovie.poster);
     const movieComponents = actorAndMovies.movies.map((movie: SlimMovie) => MovieImg(movie.posterPath));
     return (
         <div style={{width: "100000px"}}>
             <img src={actorProfilePath} width={"300px"} height={"300px"}></img>
+            <img src={originalMoviePosterPath} width={"300px"} height={"300px"}></img>
             {movieComponents}
         </div>
     )

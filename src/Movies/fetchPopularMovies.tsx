@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil";
 import { movieFilter, movieFilters } from "../Navbar/state";
-import { genresMap } from "./genres";
+import { animationGenre, genresMap } from "./genres";
 
 const readAccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZTMyMjc1M2MxOTgzOWRlZTUxOGJhNjkyN2Q4Zjk2YSIsInN1YiI6IjYxYjE1ZmIxNTgwMGM0MDAxOTlhMGQxMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VZC3BOQSiAR4sQY0axoNID0byNXGlrouNz6AuP4z5Zk";
 export const headers = {
@@ -94,7 +94,7 @@ async function fetchPopularMovies(): Promise<Movie[]> {
       (accumulator, value) => accumulator.concat(value, [])
   )
   const englishLanguageMovies = responseMoviesFlattened.filter(
-    (movie: any) => movie.original_language === "en"
+    (movie: any) => movie.original_language === "en" && !(movie.genre_ids.includes(animationGenre))
   )
   const popularMovies = englishLanguageMovies.map((movie: any) => ({
     id: movie.id,
