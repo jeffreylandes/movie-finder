@@ -8,7 +8,6 @@ import { NewMoviePage } from "./pages/newMovies/NewMoviePage";
 
 function App() {
   const isNewMoviesSelected = useRecoilValue(newMoviesSelected);
-  console.log(isNewMoviesSelected);
   return (
     <div>
       {!isNewMoviesSelected && (

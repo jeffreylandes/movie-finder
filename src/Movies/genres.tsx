@@ -3,7 +3,6 @@ export const genresMap: Map<number, string> = new Map<number, string>([
   [12, "Adventure"],
   [35, "Comedy"],
   [80, "Crime"],
-  [99, "Documentary"],
   [18, "Drama"],
   [27, "Horror"],
   [9648, "Mystery"],

@@ -7,7 +7,7 @@ export const headers = {
     "Authorization": `Bearer ${readAccessToken}`
 };
 
-const NUM_PAGES = 10;
+const NUM_PAGES = 500;
 
 export type Movie = {
   id: string;

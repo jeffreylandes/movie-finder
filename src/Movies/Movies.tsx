@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useRecoilState,
   useRecoilValue,
@@ -6,6 +6,8 @@ import {
 } from "recoil";
 import { Movie, popularMovies, popularMoviesSelector } from "./fetchPopularMovies";
 import { favoriteMovies } from "./state";
+
+const SCROLL_RATIO = 0.85;
 
 export const getFullUrlFromPoster = (poster: string) =>
   `https://image.tmdb.org/t/p/w500/${poster}`;
@@ -49,6 +51,7 @@ function MovieComponent(
 }
 
 function Movies() {
+  const [totalMovies, setTotalMovies] = useState(20);
   const moviesSelector = useRecoilValueLoadable(popularMoviesSelector);
   const [movies, setPopularMovies] = useRecoilState(popularMovies);
   const currentFavoriteMovies = useRecoilValue(favoriteMovies);
@@ -57,11 +60,19 @@ function Movies() {
   useEffect(
     () => {
       if (!isLoading) {
-        setPopularMovies(moviesSelector.contents);
+        setPopularMovies(moviesSelector.contents.slice(0, totalMovies));
       }
     },
-    [moviesSelector, isLoading, setPopularMovies]
+    [totalMovies, moviesSelector, isLoading, setPopularMovies]
   )
+
+  window.addEventListener("scroll", () => {
+    const documentHeight = document.body.getBoundingClientRect().height;
+    if (window.scrollY + window.innerHeight >= documentHeight * SCROLL_RATIO) {
+      setTotalMovies(totalMovies + 10);
+      setTimeout(() => {}, 1000) // Would like to get rid of this, but effectively limits number of additional rendered movies
+    }
+  })
 
   const movieComponents = movies.map((movie: Movie) =>
     MovieComponent(movie, currentFavoriteMovies)
