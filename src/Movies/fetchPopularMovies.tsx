@@ -1,11 +1,7 @@
 import { atom, selector } from "recoil";
+import { movieFetch, requestParams } from "../fetch/axiosFetch";
 import { movieFilter, movieFilters } from "../Navbar/state";
 import { animationGenre, genresMap } from "./genres";
-
-const readAccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZTMyMjc1M2MxOTgzOWRlZTUxOGJhNjkyN2Q4Zjk2YSIsInN1YiI6IjYxYjE1ZmIxNTgwMGM0MDAxOTlhMGQxMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VZC3BOQSiAR4sQY0axoNID0byNXGlrouNz6AuP4z5Zk";
-export const headers = {
-    "Authorization": `Bearer ${readAccessToken}`
-};
 
 const NUM_PAGES = 500;
 
@@ -20,8 +16,8 @@ export type Movie = {
 
 export const popularMovies = atom<Movie[]>({
   key: "PopularMovies",
-  default: []
-})
+  default: [],
+});
 
 function movieWithinTimeframe(movie: Movie, time: string): boolean {
   if (movie.releaseDate === undefined) {
@@ -56,30 +52,38 @@ function isMovieFiltered(movie: Movie, filter: movieFilter): boolean {
 
 export const popularMoviesSelector = selector<Movie[]>({
   key: "PopularMoviesSelector",
-  get: async ( {get} ) => {
+  get: async ({ get }) => {
     const filters = Array.from(get(movieFilters));
     const allPopularMovies = await fetchPopularMovies();
     if (filters.length === 0) {
       return allPopularMovies;
     }
-    const filteredPopularMovies = allPopularMovies.filter(
-      (movie) => filters.map((filter) => isMovieFiltered(movie, filter)).some(bool => bool)
-    )
+    const filteredPopularMovies = allPopularMovies.filter((movie) =>
+      filters
+        .map((filter) => isMovieFiltered(movie, filter))
+        .some((bool) => bool)
+    );
     return filteredPopularMovies;
-  }
+  },
 });
 
 async function requestPage(page: number) {
-  const url = `https://api.themoviedb.org/3/movie/popular?api_key=9e322753c19839dee518ba6927d8f96a&page=${page}`;
-  const responseData = await fetch(url, { headers: headers })
-    .then((response) => response.json())
-    .then((data) => data.results);
-  return responseData;
+  const url = '/movie/popular';
+  const requestParamsWithPage = {
+    params: {
+      ...requestParams.params,
+      page: page
+    }
+  }
+  const movies = await movieFetch
+    .get(url, requestParamsWithPage)
+    .then((response: any) => response.data.results);
+  return movies;
 }
 
 function getMovieGenres(movie: any) {
   const genres = movie.genre_ids;
-  return genres.map((genreId: number) => genresMap.get(genreId))
+  return genres.map((genreId: number) => genresMap.get(genreId));
 }
 
 async function fetchPopularMovies(): Promise<Movie[]> {
@@ -90,12 +94,14 @@ async function fetchPopularMovies(): Promise<Movie[]> {
   const responseMovies = await Promise.all(requestPromises).then(
     (response) => response
   );
-  const responseMoviesFlattened = responseMovies.reduce(
-      (accumulator, value) => accumulator.concat(value, [])
-  )
+  const responseMoviesFlattened = responseMovies.reduce((accumulator, value) =>
+    accumulator.concat(value, [])
+  );
   const englishLanguageMovies = responseMoviesFlattened.filter(
-    (movie: any) => movie.original_language === "en" && !(movie.genre_ids.includes(animationGenre))
-  )
+    (movie: any) =>
+      movie.original_language === "en" &&
+      !movie.genre_ids.includes(animationGenre)
+  );
   const popularMovies = englishLanguageMovies.map((movie: any) => ({
     id: movie.id,
     name: movie.original_title,

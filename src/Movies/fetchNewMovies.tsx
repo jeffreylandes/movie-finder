@@ -1,5 +1,5 @@
+import { movieFetch, requestParams } from "../fetch/axiosFetch";
 import { Actor } from "./fetchActors";
-import { headers } from "./fetchPopularMovies";
 import { animationGenre } from "./genres";
 
 export type SlimMovie = {
@@ -28,10 +28,9 @@ function characterIsCredited(characterName: string | undefined) {
 export async function fetchPersonsMovies(
   actor: Actor
 ): Promise<ActorAndMovies> {
-  const url = `https://api.themoviedb.org/3/person/${actor.id}/movie_credits?api_key=9e322753c19839dee518ba6927d8f96a`;
-  const movies: Array<any> = await fetch(url, { headers: headers })
-    .then((response) => response.json())
-    .then((allMovies) => allMovies.cast);
+  const url = `/person/${actor.id}/movie_credits`;
+  const movies: Array<any> = await movieFetch.get(url, requestParams)
+    .then((response: any) => response.data.cast)
   const moviesSortedByPopularity = movies.sort(compareTwoMoviesPopularity);
   const creditedMovies = moviesSortedByPopularity.filter(
     (movie) =>
