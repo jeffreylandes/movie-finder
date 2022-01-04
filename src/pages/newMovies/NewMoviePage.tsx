@@ -1,42 +1,103 @@
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilValue, useRecoilValueLoadable } from "recoil";
+import { Actor } from "../../Movies/fetchActors";
 import { ActorAndMovies, SlimMovie } from "../../Movies/fetchNewMovies";
 import { getFullUrlFromPoster } from "../../Movies/Movies";
 import { newFavoriteMovies } from "../../Movies/state";
+import { displayTypeAtom, Navbar } from "./NavbarNewMovies";
 
-function MovieImg(posterPath: string) {
-    const moviePosterPath = getFullUrlFromPoster(posterPath);
-    return <img src={moviePosterPath} width={"300px"} height={"300px"}></img>
+type MovieAndActor = {
+  movie: SlimMovie;
+  actor: Actor;
+};
+
+type MovieAndActors = {
+    movie: SlimMovie;
+    actors: Actor[];
 }
 
-function ActorAndMoviesComponent(actorAndMovies: ActorAndMovies) {
-    const actorProfilePath = getFullUrlFromPoster(actorAndMovies.actor.profilePath);
-    const originalMoviePosterPath = getFullUrlFromPoster(actorAndMovies.actor.originalMovie.poster);
-    const movieComponents = actorAndMovies.movies.map((movie: SlimMovie) => MovieImg(movie.posterPath));
+function ActorImage(actor: Actor) {
+    return <img src={getFullUrlFromPoster(actor.profilePath)} width={"300px"} height={"300px"}></img>
+}
+
+function MovieAndActorsComponent(movieAndActors: MovieAndActors) {
+    const actors = movieAndActors.actors.map((actor) => ActorImage(actor));
     return (
-        <div style={{width: "100000px"}}>
-            <img src={actorProfilePath} width={"300px"} height={"300px"}></img>
-            <img src={originalMoviePosterPath} width={"300px"} height={"300px"}></img>
-            {movieComponents}
+        <div>
+            <img src={getFullUrlFromPoster(movieAndActors.movie.posterPath)} width={"300px"} height={"300px"}></img>
+            {actors}
         </div>
     )
 }
 
+function sortByMoviePopularity(movieOne: MovieAndActors, movieTwo: MovieAndActors) {
+    return movieOne.movie.popularity >= movieTwo.movie.popularity ? -1 : 1;
+}
+
+function MoviePopularityComponent(newMovies: ActorAndMovies[]) {
+  const flatMovies: MovieAndActor[] = newMovies.flatMap(
+    (actorAndMovies: ActorAndMovies) =>
+      actorAndMovies.movies.map((movie: SlimMovie) => ({
+        movie: movie,
+        actor: actorAndMovies.actor,
+      }))
+  );
+  const movieToActorsMap = new Map<string, MovieAndActors>();
+  flatMovies.forEach(
+      (movieAndActor: MovieAndActor) => {
+        const movieId = movieAndActor.movie.movieId;
+        const actors = movieToActorsMap.get(movieId);
+        const newActors = actors !== undefined ? actors.actors.concat([movieAndActor.actor]) : [movieAndActor.actor];
+        const movieAndActors: MovieAndActors = {movie: movieAndActor.movie, actors: newActors};
+        movieToActorsMap.set(movieId, movieAndActors);
+      }
+  )
+  const movieToActors = Array.from(movieToActorsMap.values()).sort((movieOne, movieTwo) => sortByMoviePopularity(movieOne, movieTwo));
+  const components = movieToActors.map((movieAndActors) => 
+    MovieAndActorsComponent(movieAndActors)
+  );
+  return (
+      <div style={{"width": "85%", "backgroundColor": "gray"}}>
+          {components}
+      </div>
+  )
+}
+
+function ActorComponent(newMovies: ActorAndMovies[]) {
+  return <></>;
+}
+
+function NewMovies() {
+  const displayType = useRecoilValue(displayTypeAtom);
+  const newMovies = useRecoilValueLoadable(newFavoriteMovies);
+  const newMoviesLoading = newMovies.state === "loading";
+  const hasError = newMovies.state === "hasError";
+
+  if (hasError) {
+    throw new Error("Unable to fetch new movies.");
+  }
+
+  if (newMoviesLoading) {
+    return <div></div>;
+  }
+
+  switch (displayType) {
+    case "By Movie Popularity": {
+      return MoviePopularityComponent(newMovies.contents);
+    }
+    case "By Actor / Actress": {
+      return ActorComponent(newMovies.contents);
+    }
+    default: {
+      return <></>;
+    }
+  }
+}
+
 export function NewMoviePage() {
-    const newMovies = useRecoilValueLoadable(newFavoriteMovies);
-    const newMoviesLoading = newMovies.state === "loading";
-    const hasError = newMovies.state === "hasError";
-
-    if (hasError) {
-        throw new Error("Unable to fetch new movies.");
-    }
-
-    if (newMoviesLoading) {
-        return <div></div>
-    }
-    const newMovieComponents = newMovies.contents.map(
-        (actorAndMovie: ActorAndMovies) => ActorAndMoviesComponent(actorAndMovie)
-    )
-    return <div style={{overflowX: "scroll"}}>
-        {newMovieComponents}
+  return (
+    <div style={{ display: "flex" }}>
+      <Navbar />
+      <NewMovies />
     </div>
+  );
 }

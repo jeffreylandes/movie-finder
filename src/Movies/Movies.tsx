@@ -31,10 +31,6 @@ function MovieComponent(
     }
   }
 
-  const onMouseOver = () => {
-    return <div></div>
-  }
-
   return (
     <div>
       <h4 style={{ textAlign: "center", maxWidth: "300px", maxHeight: "15px", fontFamily: "Trebuchet MS" }}>{name}</h4>
@@ -44,7 +40,6 @@ function MovieComponent(
         width={300}
         alt={altText}
         onClick={onClick}
-        onMouseOver={onMouseOver}
       />
     </div>
   );
@@ -69,8 +64,8 @@ function Movies() {
   window.addEventListener("scroll", () => {
     const documentHeight = document.body.getBoundingClientRect().height;
     if (window.scrollY + window.innerHeight >= documentHeight * SCROLL_RATIO) {
-      setTotalMovies(totalMovies + 10);
-      setTimeout(() => {}, 1000) // Would like to get rid of this, but effectively limits number of additional rendered movies
+      setTotalMovies(totalMovies + 20);
+      //setTimeout(() => {}, 1000) // Would like to get rid of this, but effectively limits number of additional rendered movies
     }
   })
 

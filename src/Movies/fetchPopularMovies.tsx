@@ -3,7 +3,7 @@ import { movieFetch, requestParams } from "../fetch/axiosFetch";
 import { movieFilter, movieFilters } from "../Navbar/state";
 import { animationGenre, genresMap } from "./genres";
 
-const NUM_PAGES = 500;
+const NUM_PAGES = 15;
 
 export type Movie = {
   id: string;

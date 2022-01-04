@@ -6,6 +6,7 @@ export type SlimMovie = {
   movieId: string;
   title: string;
   posterPath: string;
+  popularity: number;
 };
 
 export type ActorAndMovies = {
@@ -43,6 +44,7 @@ export async function fetchPersonsMovies(
     movieId: movie.id,
     title: movie.title,
     posterPath: movie.poster_path,
+    popularity: movie.popularity,
   }));
 
   const actorAndMovies = {
