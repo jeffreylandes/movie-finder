@@ -1,12 +1,8 @@
 import { useRecoilValue, useRecoilValueLoadable } from "recoil";
-import { ActorAndMovies } from "../../Movies/fetchNewMovies";
 import { newFavoriteMovies } from "../../Movies/state";
+import { ActorListComponent } from "./ActorListComponent";
 import { MoviePopularityComponent } from "./MoviePopularityComponent";
 import { displayTypeAtom, Navbar } from "./NavbarNewMovies";
-
-function ActorComponent(newMovies: ActorAndMovies[]) {
-  return <></>;
-}
 
 function NewMovies() {
   const displayType = useRecoilValue(displayTypeAtom);
@@ -27,7 +23,7 @@ function NewMovies() {
       return MoviePopularityComponent(newMovies.contents);
     }
     case "By Actor / Actress": {
-      return ActorComponent(newMovies.contents);
+      return ActorListComponent(newMovies.contents);
     }
     default: {
       return <></>;

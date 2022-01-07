@@ -1,12 +1,12 @@
 import { atom, useRecoilState } from "recoil";
 
 const buttonStyle = {
-    backgroundColor: "gray",
-    borderColor: "gray",
-    borderStyle: "none",
-    fontFamily: "Trebuchet MS",
-    fontSize: "15px",
-  };
+  backgroundColor: "gray",
+  borderColor: "gray",
+  borderStyle: "none",
+  fontFamily: "Trebuchet MS",
+  fontSize: "20px",
+};
 
 
 export const displayTypeAtom = atom<string>({

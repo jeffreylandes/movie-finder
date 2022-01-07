@@ -8,6 +8,7 @@ export type Actor = {
   name: string;
   profilePath: string;
   originalMovie: Movie;
+  popularity: number;
 };
 
 export async function fetchActorsFromMovie(movie: Movie): Promise<Actor[]> {
@@ -24,6 +25,7 @@ export async function fetchActorsFromMovie(movie: Movie): Promise<Actor[]> {
     id: person.id,
     name: person.name,
     profilePath: person.profile_path,
+    popularity: person.popularity,
     originalMovie: movie,
   }));
 

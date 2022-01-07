@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from "recoil";
 import {
-  useRecoilState,
-  useRecoilValue,
-  useRecoilValueLoadable,
-} from "recoil";
-import { Movie, popularMovies, popularMoviesSelector } from "./fetchPopularMovies";
+  Movie,
+  popularMovies,
+  popularMoviesSelector,
+} from "./fetchPopularMovies";
 import { favoriteMovies } from "./state";
 
 const SCROLL_RATIO = 0.85;
@@ -15,11 +15,8 @@ export const getFullUrlFromPoster = (poster: string) =>
 const getAltTextFromMovieName = (name: string) =>
   `Official movie poster for ${name}`;
 
-function MovieComponent(
-  movie: Movie,
-  currentFavoriteMovies: Set<Movie>,
-) {
-  const { name, poster, } = movie;
+function MovieComponent(movie: Movie, currentFavoriteMovies: Set<Movie>) {
+  const { name, poster } = movie;
   const fullPosterUrl = getFullUrlFromPoster(poster);
   const altText = getAltTextFromMovieName(name);
 
@@ -29,11 +26,20 @@ function MovieComponent(
     } else {
       currentFavoriteMovies.delete(movie);
     }
-  }
+  };
 
   return (
     <div>
-      <h4 style={{ textAlign: "center", maxWidth: "300px", maxHeight: "15px", fontFamily: "Trebuchet MS" }}>{name}</h4>
+      <h4
+        style={{
+          textAlign: "center",
+          maxWidth: "300px",
+          maxHeight: "15px",
+          fontFamily: "Trebuchet MS",
+        }}
+      >
+        {name}
+      </h4>
       <img
         src={fullPosterUrl}
         height={300}
@@ -52,22 +58,24 @@ function Movies() {
   const currentFavoriteMovies = useRecoilValue(favoriteMovies);
   const isLoading = moviesSelector.state === "loading";
 
-  useEffect(
-    () => {
-      if (!isLoading) {
-        setPopularMovies(moviesSelector.contents.slice(0, totalMovies));
-      }
-    },
-    [totalMovies, moviesSelector, isLoading, setPopularMovies]
-  )
-
-  window.addEventListener("scroll", () => {
-    const documentHeight = document.body.getBoundingClientRect().height;
-    if (window.scrollY + window.innerHeight >= documentHeight * SCROLL_RATIO) {
-      setTotalMovies(totalMovies + 20);
-      //setTimeout(() => {}, 1000) // Would like to get rid of this, but effectively limits number of additional rendered movies
+  useEffect(() => {
+    if (!isLoading) {
+      setPopularMovies(moviesSelector.contents.slice(0, totalMovies));
     }
-  })
+  }, [totalMovies, moviesSelector, isLoading, setPopularMovies]);
+
+  useEffect(() => {
+    window.onscroll = () => {
+      const documentHeight = document.body.getBoundingClientRect().height;
+      if (
+        window.scrollY + window.innerHeight >=
+        documentHeight * SCROLL_RATIO
+      ) {
+        setTotalMovies(totalMovies + 20);
+        //setTimeout(() => {}, 1000) // Would like to get rid of this, but effectively limits number of additional rendered movies
+      }
+    };
+  }, [totalMovies]);
 
   const movieComponents = movies.map((movie: Movie) =>
     MovieComponent(movie, currentFavoriteMovies)
@@ -81,7 +89,7 @@ function Movies() {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "space-around",
-        gap: "20px"
+        gap: "20px",
       }}
     >
       {movieComponents}
