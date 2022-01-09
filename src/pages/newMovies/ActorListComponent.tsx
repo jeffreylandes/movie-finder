@@ -8,6 +8,7 @@ function ActorAndMovieComponent(actorAndMovie: ActorAndMovies) {
         width={300}
         height={300}
         src={getFullUrlFromPoster(actorAndMovie.actor.profilePath)}
+        alt={`Headshot of ${actorAndMovie.actor}`}
       />
     </div>
   );

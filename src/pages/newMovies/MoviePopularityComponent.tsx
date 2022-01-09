@@ -18,6 +18,7 @@ function ActorImage(actor: Actor) {
       src={getFullUrlFromPoster(actor.profilePath)}
       width={"300px"}
       height={"300px"}
+      alt={`Headshot of ${actor.name}`}
     ></img>
   );
 }
@@ -30,6 +31,7 @@ function MovieAndActorsComponent(movieAndActors: MovieAndActors) {
         src={getFullUrlFromPoster(movieAndActors.movie.posterPath)}
         width={"300px"}
         height={"300px"}
+        alt={movieAndActors.movie.title}
       ></img>
       {actors}
     </div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from "recoil";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import {
   Movie,
   popularMovies,
@@ -15,17 +15,13 @@ export const getFullUrlFromPoster = (poster: string) =>
 const getAltTextFromMovieName = (name: string) =>
   `Official movie poster for ${name}`;
 
-function MovieComponent(movie: Movie, currentFavoriteMovies: Set<Movie>) {
+function MovieComponent(movie: Movie, setLikedMoviesCallback: (movie: Movie) => void) {
   const { name, poster } = movie;
   const fullPosterUrl = getFullUrlFromPoster(poster);
   const altText = getAltTextFromMovieName(name);
 
   const onClick = () => {
-    if (!currentFavoriteMovies.has(movie)) {
-      currentFavoriteMovies.add(movie);
-    } else {
-      currentFavoriteMovies.delete(movie);
-    }
+    setLikedMoviesCallback(movie);
   };
 
   return (
@@ -55,7 +51,7 @@ function Movies() {
   const [totalMovies, setTotalMovies] = useState(20);
   const moviesSelector = useRecoilValueLoadable(popularMoviesSelector);
   const [movies, setPopularMovies] = useRecoilState(popularMovies);
-  const currentFavoriteMovies = useRecoilValue(favoriteMovies);
+  const [currentFavoriteMovies, setCurrentFavoriteMovies] = useRecoilState(favoriteMovies);
   const isLoading = moviesSelector.state === "loading";
 
   useEffect(() => {
@@ -77,15 +73,25 @@ function Movies() {
     };
   }, [totalMovies]);
 
+  const setLikedMoviesCallback = useCallback((movie: Movie) => {
+    if (!currentFavoriteMovies.has(movie)) {
+      currentFavoriteMovies.add(movie);
+      setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
+    } else {
+      currentFavoriteMovies.delete(movie);
+      setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
+    }
+  }, [currentFavoriteMovies, setCurrentFavoriteMovies])
+
   const movieComponents = movies.map((movie: Movie) =>
-    MovieComponent(movie, currentFavoriteMovies)
+    MovieComponent(movie, setLikedMoviesCallback)
   );
 
   return (
     <div
       style={{
         backgroundColor: "#A8A8A8",
-        width: "85%",
+        width: "65%",
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "space-around",
