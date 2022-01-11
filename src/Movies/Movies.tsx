@@ -74,6 +74,10 @@ function Movies() {
   }, [totalMovies]);
 
   const setLikedMoviesCallback = useCallback((movie: Movie) => {
+    if (currentFavoriteMovies.size >= 5) {
+      alert("You have already selected 5 movies!") 
+      return;
+    }
     if (!currentFavoriteMovies.has(movie)) {
       currentFavoriteMovies.add(movie);
       setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
