@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValueLoadable } from "recoil";
-import {
-  Movie,
-  popularMovies,
-  popularMoviesSelector,
-} from "./fetchPopularMovies";
-import { favoriteMovies } from "./state";
+import { Movie } from "../../fetch/fetchPopularMovies";
+import { favoriteMovies, popularMovies, popularMoviesSelector } from "./state";
 
 const SCROLL_RATIO = 0.85;
 
@@ -15,7 +11,10 @@ export const getFullUrlFromPoster = (poster: string) =>
 const getAltTextFromMovieName = (name: string) =>
   `Official movie poster for ${name}`;
 
-function MovieComponent(movie: Movie, setLikedMoviesCallback: (movie: Movie) => void) {
+function MovieComponent(
+  movie: Movie,
+  setLikedMoviesCallback: (movie: Movie) => void
+) {
   const { name, poster } = movie;
   const fullPosterUrl = getFullUrlFromPoster(poster);
   const altText = getAltTextFromMovieName(name);
@@ -51,7 +50,8 @@ function Movies() {
   const [totalMovies, setTotalMovies] = useState(20);
   const moviesSelector = useRecoilValueLoadable(popularMoviesSelector);
   const [movies, setPopularMovies] = useRecoilState(popularMovies);
-  const [currentFavoriteMovies, setCurrentFavoriteMovies] = useRecoilState(favoriteMovies);
+  const [currentFavoriteMovies, setCurrentFavoriteMovies] =
+    useRecoilState(favoriteMovies);
   const isLoading = moviesSelector.state === "loading";
 
   useEffect(() => {
@@ -73,19 +73,22 @@ function Movies() {
     };
   }, [totalMovies]);
 
-  const setLikedMoviesCallback = useCallback((movie: Movie) => {
-    if (currentFavoriteMovies.size >= 5) {
-      alert("You have already selected 5 movies!") 
-      return;
-    }
-    if (!currentFavoriteMovies.has(movie)) {
-      currentFavoriteMovies.add(movie);
-      setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
-    } else {
-      currentFavoriteMovies.delete(movie);
-      setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
-    }
-  }, [currentFavoriteMovies, setCurrentFavoriteMovies])
+  const setLikedMoviesCallback = useCallback(
+    (movie: Movie) => {
+      if (currentFavoriteMovies.size >= 5) {
+        alert("You have already selected 5 movies!");
+        return;
+      }
+      if (!currentFavoriteMovies.has(movie)) {
+        currentFavoriteMovies.add(movie);
+        setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
+      } else {
+        currentFavoriteMovies.delete(movie);
+        setCurrentFavoriteMovies(new Set(currentFavoriteMovies));
+      }
+    },
+    [currentFavoriteMovies, setCurrentFavoriteMovies]
+  );
 
   const movieComponents = movies.map((movie: Movie) =>
     MovieComponent(movie, setLikedMoviesCallback)

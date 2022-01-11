@@ -1,6 +1,5 @@
 import { useRecoilValue, useSetRecoilState } from "recoil"
-import { favoriteMovies } from "../Movies/state";
-import { newMoviesSelected } from "./state"
+import { favoriteMovies, newMoviesSelected } from "./state";
 
 const buttonStyle = {
     "backgroundColor": "green",

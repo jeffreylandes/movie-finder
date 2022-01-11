@@ -1,6 +1,6 @@
-import { Actor } from "../../Movies/fetchActors";
-import { ActorAndMovies, SlimMovie } from "../../Movies/fetchNewMovies";
-import { getFullUrlFromPoster } from "../../Movies/Movies";
+import { Actor } from "../../fetch/fetchActors";
+import { ActorAndMovies, SlimMovie } from "../../fetch/fetchNewMovies";
+import { getFullUrlFromPoster } from "../popularMovies/Movies";
 import { DisplayImage } from "./ActorListComponent";
 
 type MovieAndActor = {

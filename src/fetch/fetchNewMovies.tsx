@@ -1,6 +1,6 @@
-import { movieFetch, requestParams } from "../fetch/axiosFetch";
+import { movieFetch, requestParams } from "../utils/axiosFetch";
 import { Actor } from "./fetchActors";
-import { animationGenre } from "./genres";
+import { animationGenre } from "../pages/popularMovies/genres";
 
 export type SlimMovie = {
   movieId: string;

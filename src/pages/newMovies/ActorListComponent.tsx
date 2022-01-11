@@ -1,5 +1,5 @@
-import { ActorAndMovies, SlimMovie } from "../../Movies/fetchNewMovies";
-import { getFullUrlFromPoster } from "../../Movies/Movies";
+import { ActorAndMovies, SlimMovie } from "../../fetch/fetchNewMovies";
+import { getFullUrlFromPoster } from "../popularMovies/Movies";
 
 function getTitleBasedOnMovie(title: string): string {
   return `Because you liked ${title}`

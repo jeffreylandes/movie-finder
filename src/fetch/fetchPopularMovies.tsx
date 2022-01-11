@@ -1,9 +1,8 @@
-import { atom, selector } from "recoil";
-import { movieFetch, requestParams } from "../fetch/axiosFetch";
-import { movieFilter, movieFilters } from "../Navbar/state";
-import { animationGenre, genresMap } from "./genres";
+import { movieFetch, requestParams } from "../utils/axiosFetch";
+import { animationGenre, genresMap } from "../pages/popularMovies/genres";
+import { movieFilter } from "../pages/popularMovies/state";
 
-const NUM_PAGES = 15;
+const NUM_PAGES = 30;
 
 export type Movie = {
   id: string;
@@ -13,11 +12,6 @@ export type Movie = {
   genres: Array<string>;
   overview: string;
 };
-
-export const popularMovies = atom<Movie[]>({
-  key: "PopularMovies",
-  default: [],
-});
 
 function movieWithinTimeframe(movie: Movie, time: string): boolean {
   if (movie.releaseDate === undefined) {
@@ -38,7 +32,7 @@ function movieHasGenre(movie: Movie, genre: string): boolean {
   return false;
 }
 
-function isMovieFiltered(movie: Movie, filter: movieFilter): boolean {
+export function isMovieFiltered(movie: Movie, filter: movieFilter): boolean {
   switch (filter.key) {
     case "time": {
       return movieWithinTimeframe(movie, filter.value);
@@ -50,22 +44,10 @@ function isMovieFiltered(movie: Movie, filter: movieFilter): boolean {
   }
 }
 
-export const popularMoviesSelector = selector<Movie[]>({
-  key: "PopularMoviesSelector",
-  get: async ({ get }) => {
-    const filters = Array.from(get(movieFilters));
-    const allPopularMovies = await fetchPopularMovies();
-    if (filters.length === 0) {
-      return allPopularMovies;
-    }
-    const filteredPopularMovies = allPopularMovies.filter((movie) =>
-      filters
-        .map((filter) => isMovieFiltered(movie, filter))
-        .some((bool) => bool)
-    );
-    return filteredPopularMovies;
-  },
-});
+function getMovieGenres(movie: any) {
+  const genres = movie.genre_ids;
+  return genres.map((genreId: number) => genresMap.get(genreId));
+}
 
 async function requestPage(page: number) {
   const url = '/movie/popular';
@@ -81,12 +63,7 @@ async function requestPage(page: number) {
   return movies;
 }
 
-function getMovieGenres(movie: any) {
-  const genres = movie.genre_ids;
-  return genres.map((genreId: number) => genresMap.get(genreId));
-}
-
-async function fetchPopularMovies(): Promise<Movie[]> {
+export async function fetchPopularMovies(): Promise<Movie[]> {
   const allPages = Array.from(Array(NUM_PAGES).keys());
   const requestPromises = allPages.map((pageNumber) =>
     requestPage(pageNumber + 1)

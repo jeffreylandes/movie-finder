@@ -1,4 +1,4 @@
-import { movieFetch, requestParams } from "../fetch/axiosFetch";
+import { movieFetch, requestParams } from "../utils/axiosFetch";
 import { Movie } from "./fetchPopularMovies";
 
 const ACTOR_POPULARITY_THRESHOLD = 5;

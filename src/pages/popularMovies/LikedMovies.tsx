@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useRecoilState } from "recoil";
-import { Movie } from "./fetchPopularMovies";
+import { Movie } from "../../fetch/fetchPopularMovies";
 import { getFullUrlFromPoster } from "./Movies";
 import { favoriteMovies } from "./state";
 

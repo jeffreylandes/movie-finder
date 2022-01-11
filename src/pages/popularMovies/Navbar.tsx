@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { genresMap } from "../Movies/genres";
-import { movieFilter, movieFilters } from "./state"
+import { genresMap } from "./genres";
+import { movieFilter, movieFilters } from "./state";
 
 const buttonStyle = {
   backgroundColor: "gray",

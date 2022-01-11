@@ -1,5 +1,5 @@
 import { useRecoilValue, useRecoilValueLoadable } from "recoil";
-import { newFavoriteMovies } from "../../Movies/state";
+import { newFavoriteMovies } from "../popularMovies/state";
 import { ActorListComponent } from "./ActorListComponent";
 import { MoviePopularityComponent } from "./MoviePopularityComponent";
 import { displayTypeAtom, Navbar } from "./NavbarNewMovies";
