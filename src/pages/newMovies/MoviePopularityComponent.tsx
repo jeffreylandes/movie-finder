@@ -1,6 +1,7 @@
 import { Actor } from "../../Movies/fetchActors";
 import { ActorAndMovies, SlimMovie } from "../../Movies/fetchNewMovies";
 import { getFullUrlFromPoster } from "../../Movies/Movies";
+import { DisplayImage } from "./ActorListComponent";
 
 type MovieAndActor = {
   movie: SlimMovie;
@@ -12,28 +13,25 @@ type MovieAndActors = {
   actors: Actor[];
 };
 
-function ActorImage(actor: Actor) {
-  return (
-    <img
-      src={getFullUrlFromPoster(actor.profilePath)}
-      width={"300px"}
-      height={"300px"}
-      alt={`Headshot of ${actor.name}`}
-    ></img>
-  );
-}
-
 function MovieAndActorsComponent(movieAndActors: MovieAndActors) {
-  const actors = movieAndActors.actors.map((actor) => ActorImage(actor));
+  const { movie, actors } = movieAndActors;
+  const actorsImages = actors.map((actor) =>
+    DisplayImage(
+      getFullUrlFromPoster(actor.profilePath),
+      actor.name,
+      false,
+      actor.originalMovie.name
+    )
+  );
+  const movieImage = DisplayImage(
+    getFullUrlFromPoster(movie.posterPath),
+    movie.title,
+    true
+  );
   return (
-    <div>
-      <img
-        src={getFullUrlFromPoster(movieAndActors.movie.posterPath)}
-        width={"300px"}
-        height={"300px"}
-        alt={movieAndActors.movie.title}
-      ></img>
-      {actors}
+    <div style={{ display: "flex", gap: "20px", margin: "20px" }}>
+      {movieImage}
+      {actorsImages}
     </div>
   );
 }
@@ -73,7 +71,5 @@ export function MoviePopularityComponent(newMovies: ActorAndMovies[]) {
   const components = movieToActors.map((movieAndActors) =>
     MovieAndActorsComponent(movieAndActors)
   );
-  return (
-    <div style={{ width: "85%", backgroundColor: "gray" }}>{components}</div>
-  );
+  return <div style={{ width: "85%", overflowX: "scroll" }}>{components}</div>;
 }

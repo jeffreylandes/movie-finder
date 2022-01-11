@@ -33,7 +33,7 @@ function NewMovies() {
 
 export function NewMoviePage() {
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", backgroundColor: "#A8A8A8", }}>
       <Navbar />
       <NewMovies />
     </div>
