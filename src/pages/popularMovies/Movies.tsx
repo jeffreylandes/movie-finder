@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import { Movie } from "../../fetch/fetchPopularMovies";
 import { favoriteMovies, popularMovies, popularMoviesSelector } from "./state";
+import { debounce } from "lodash";
 
 const SCROLL_RATIO = 0.85;
 
@@ -48,6 +49,7 @@ function MovieComponent(
 
 function Movies() {
   const [totalMovies, setTotalMovies] = useState(20);
+  const setTotalMoviesDebounced = debounce(setTotalMovies, 500);
   const moviesSelector = useRecoilValueLoadable(popularMoviesSelector);
   const [movies, setPopularMovies] = useRecoilState(popularMovies);
   const [currentFavoriteMovies, setCurrentFavoriteMovies] =
@@ -67,8 +69,7 @@ function Movies() {
         window.scrollY + window.innerHeight >=
         documentHeight * SCROLL_RATIO
       ) {
-        setTotalMovies(totalMovies + 20);
-        //setTimeout(() => {}, 1000) // Would like to get rid of this, but effectively limits number of additional rendered movies
+        setTotalMoviesDebounced(totalMovies + 20);
       }
     };
   }, [totalMovies]);
